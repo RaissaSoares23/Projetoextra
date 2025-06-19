@@ -1,5 +1,5 @@
-package proj;
+//package proj;
 
-public class proje {
+//public class proje {
 
-}
+//}
