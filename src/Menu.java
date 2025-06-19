@@ -1,93 +1,67 @@
-iimport java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Menu {
-    private Turma turma = new Turma();
+    private Scanner sc = new Scanner(System.in);
+    private Persistencia persistencia;
 
-    public void executar() {
-        Scanner sc = new Scanner(System.in);
-        int opcao;
+    public Menu(Persistencia persistencia) {
+        this.persistencia = persistencia;
+    }
 
-        do {
+    public void exibir() {
+        int opcao = -1;
+
+        while (opcao != 3) {
             System.out.println("\n===== MENU =====");
             System.out.println("1. Adicionar novo aluno");
             System.out.println("2. Listar todos os alunos");
             System.out.println("3. Sair");
-            System.out.print("Escolha uma opção: ");
-
+            System.out.print("Opção: ");
+            
             try {
-                opcao = sc.nextInt();
-                sc.nextLine(); // limpa o buffer
+                opcao = Integer.parseInt(sc.nextLine());
 
                 switch (opcao) {
-                    case 1:
-                        adicionarAluno(sc);
-                        break;
-                    case 2:
-                        turma.listarAlunos();
-                        break;
-                    case 3:
-                        System.out.println("Encerrando o programa...");
-                        break;
-                    default:
-                        System.out.println("Opção inválida.");
+                    case 1: adicionarAluno(); break;
+                    case 2: persistencia.listarAlunos(); break;
+                    case 3: System.out.println("Encerrando..."); break;
+                    default: System.out.println("Opção inválida.");
                 }
-
-            } catch (InputMismatchException e) {
-                System.out.println("Entrada inválida. Use apenas números.");
-                sc.nextLine(); // limpa entrada inválida
-                opcao = 0;
+            } catch (NumberFormatException e) {
+                System.out.println("Erro: entrada inválida. Digite um número.");
             }
-        } while (opcao != 3);
-
-        sc.close();
+        }
     }
 
-    private void adicionarAluno(Scanner sc) {
-        Aluno aluno = new Aluno();
+    private void adicionarAluno() {
+        try {
+            System.out.print("Nome: ");
+            String nome = sc.nextLine();
 
-        System.out.print("Nome: ");
-        aluno.nome = sc.nextLine();
+            System.out.print("Idade: ");
+            int idade = Integer.parseInt(sc.nextLine());
 
-        System.out.print("Idade: ");
-        aluno.idade = sc.nextInt();
-        sc.nextLine();
+            System.out.print("Matrícula: ");
+            String matricula = sc.nextLine();
 
-        if (aluno.idade < 18) {
-            System.out.println("Erro: idade mínima é 18.");
-            return;
-        }
+            System.out.print("Nota N1: ");
+            double n1 = Double.parseDouble(sc.nextLine());
 
-        System.out.print("Matrícula: ");
-        aluno.matricula = sc.nextLine();
-        if (aluno.matricula.isEmpty()) {
-            System.out.println("Erro: matrícula não pode estar vazia.");
-            return;
-        }
+            System.out.print("Nota N2: ");
+            double n2 = Double.parseDouble(sc.nextLine());
 
-        aluno.n1 = lerNota(sc, "Nota 1");
-        aluno.n2 = lerNota(sc, "Nota 2");
-        aluno.n3 = lerNota(sc, "Nota 3");
+            System.out.print("Nota N3: ");
+            double n3 = Double.parseDouble(sc.nextLine());
 
-        turma.adicionarAluno(aluno);
-        System.out.println("Aluno adicionado com sucesso!");
-    }
+            Aluno aluno = new Aluno(nome, idade, matricula, n1, n2, n3);
+            persistencia.adicionarAluno(aluno);
 
-    private double lerNota(Scanner sc, String msg) {
-        double nota;
-        while (true) {
-            try {
-                System.out.print(msg + ": ");
-                nota = sc.nextDouble();
-                if (nota < 0 || nota > 10) {
-                    System.out.println("Nota fora da faixa (0 a 10).");
-                } else {
-                    return nota;
-                }
-            } catch (InputMismatchException e) {
-                System.out.println("Entrada inválida. Digite número decimal.");
-                sc.nextLine(); // limpa buffer
-            }
+            System.out.println("Aluno adicionado com sucesso!");
+
+        } catch (NumberFormatException e) {
+            System.out.println("Erro: entrada numérica inválida.");
+        } catch (NotaInvalidaException | IllegalArgumentException e) {
+            System.out.println("Erro: " + e.getMessage());
         }
     }
 }

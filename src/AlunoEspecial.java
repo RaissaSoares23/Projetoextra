@@ -1,20 +1,20 @@
 public class AlunoEspecial extends Aluno {
-    
-    String tipoNecessidade; 
-    String acompanhamento;  
-    
-    public AlunoEspecial() {
-        super(); 
+    private String projeto;
+    private boolean monitor;
+
+    public AlunoEspecial(String nome, int idade, String matricula, double n1, double n2, double n3, String projeto, boolean monitor)
+            throws NotaInvalidaException {
+        super(nome, idade, matricula, n1, n2, n3);
+        this.projeto = projeto;
+        this.monitor = monitor;
     }
-  
-    public void solicitarApoio() {
-        System.out.println(nome + " solicitou apoio especial: " + acompanhamento);
-    }
-    
+
     @Override
-    void mostrarSituacao() {
-        super.mostrarSituacao(); 
-        System.out.println("Tipo de necessidade especial: " + tipoNecessidade);
-        System.out.println("Acompanhamento: " + acompanhamento);
+    public String getSituacao() {
+        return calcularMedia() >= 5.5 ? "Aprovado (Especial)" : "Reprovado (Especial)";
+    }
+
+    public void apresentarProjeto() {
+        System.out.println(nome + " está desenvolvendo o projeto: " + projeto);
     }
 }
